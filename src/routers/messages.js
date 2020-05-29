@@ -1,6 +1,8 @@
 import Command from '../commands/command.js';
 
 export default class MessagesRouter {
+    type = 'message';
+    
     commandPrefix = Command.prefix;
 
     #commandRegistry = new Map();
@@ -62,15 +64,18 @@ export default class MessagesRouter {
         let routingStruct;
 
         if (isCommand) {
-            const { name } = Command.parseCommand(message.content)
-            const commandKey = this._findMatchingCommand(commandName);
+            const { name } = Command.parseCommand(message.content);
+            console.log(`command to be executed: ${name}`);
+            const commandKey = this._findMatchingCommand(name);
             routingStruct = this.#commandRegistry.get(commandKey);
         } else {
             const stringAction = this._findMatchingString(message.content);
             routingStruct = this.#stringRegistry.get(stringAction);
+            console.log(`exact string action found: ${stringAction}`);
 
             if (!routingStruct) {
                 const regex = this._findMatchingRegex(message.content);
+                console.log(`regex match actions found: ${regex}`);
                 routingStruct = this.#regexRegistry.get(regex);
             }            
         }
@@ -105,7 +110,7 @@ export default class MessagesRouter {
     _findMatchingCommand(commandName) {
         let match;
 
-        for ([commandStr, _] of this.#commandRegistry) {
+        for (let [commandStr, _] of this.#commandRegistry) {
             let wasMatch = commandName === commandStr;
             if (wasMatch) {
                 match = commandStr;
@@ -119,7 +124,7 @@ export default class MessagesRouter {
     _findMatchingString(str) {
         let match;
 
-        for ([registeredString, _] of this.#stringRegistry) {
+        for (let [registeredString, _] of this.#stringRegistry) {
             let wasMatch = str === registeredString;
             if (wasMatch) {
                 match = str;
@@ -133,7 +138,7 @@ export default class MessagesRouter {
     _findMatchingRegex(str) {
         let match;
 
-        for ([regex, _] of this.#regexRegistry) {
+        for (let [regex, _] of this.#regexRegistry) {
             let wasMatch = regex.test(str);
             if (wasMatch) {
                 match = regex;

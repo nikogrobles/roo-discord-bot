@@ -6,7 +6,7 @@ import MessagesRouter from './routers/messages.js';
 dotenv.config();
 
 const EVENT_ROUTER_MAP = {
-    message: MessagesRouter
+    message: 'message'
 };
 
 export default class RooBot {
@@ -35,11 +35,11 @@ export default class RooBot {
     }
 
     _registerRouter(router) {
-        const routerType = typeof router;
+        const routerType = router.type;
         const routers = this.#routerRegistry.get(routerType) || [];
 
         if (!routers.includes(router)) {
-            this.#routerRegistry.set(routerType, [...routers, router])
+            this.#routerRegistry.set(routerType, [...routers, router]);
         }
     }
 
