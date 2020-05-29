@@ -2,20 +2,12 @@ import DiscordCommand from './command.js';
 
 export default class PartyCommand extends DiscordCommand {
 
-    get channel() {
-        return this.message.channel;
-    }
-
     get count() {
         return parseInt(this.args[0], 10);
     }
 
     get hasCount() {
         return !isNaN(this.count);
-    }
-
-    get hasMentions() {
-        return this.message.mentions.users.size > 0;
     }
 
     async execute() {

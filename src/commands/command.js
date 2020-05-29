@@ -27,6 +27,14 @@ export default class DiscordCommand {
       this.discordClient = discordClient;
   }
 
+  get hasMentions() {
+    return this.message.mentions.users.size > 0;
+  }
+
+  get channel() {
+    return this.message.channel;
+  }
+
   async execute() {
     throw new Error('you must define execute on the command class');
   }
