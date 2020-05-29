@@ -1,5 +1,5 @@
-import MessagesRouter from './routers/messages';
-import { HugCommand } from './commands';
+import MessagesRouter from './routers/messages.js';
+import HugCommand from './commands/hug.js';
 
 const messagesRouter = MessagesRouter.createRoutes(function() {
 

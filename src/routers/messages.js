@@ -1,4 +1,4 @@
-import Command from "../commands/command";
+import Command from '../commands/command.js';
 
 export default class MessagesRouter {
     commandPrefix = Command.prefix;
@@ -26,7 +26,7 @@ export default class MessagesRouter {
 
     matchCommand(command, executor, options = {}) {
         const commandString = `${command.toLowerCase()}`;
-        const routingStruct = this.#createRoutingStruct(executor, options);
+        const routingStruct = this._createRoutingStruct(executor, options);
         this.#commandRegistry.set(commandString, routingStruct);
     }
 
@@ -41,12 +41,12 @@ export default class MessagesRouter {
     }
 
     matchRegex(regex, executor, options) {
-        const routingStruct = this.#createRoutingStruct(executor, options);
+        const routingStruct = this._createRoutingStruct(executor, options);
         this.#regexRegistry.set(regex, routingStruct)
     }
     
     matchExtact(str, executor, options = {}) {
-        const routingStruct = this.#createRoutingStruct(executor, options);
+        const routingStruct = this._createRoutingStruct(executor, options);
         this.#stringRegistry.set(str, routingStruct);
     }
 
@@ -63,26 +63,26 @@ export default class MessagesRouter {
 
         if (isCommand) {
             const { name } = Command.parseCommand(message.content)
-            const commandKey = this.#findMatchingCommand(commandName);
+            const commandKey = this._findMatchingCommand(commandName);
             routingStruct = this.#commandRegistry.get(commandKey);
         } else {
-            const stringAction = this.#findMatchingString(message.content);
+            const stringAction = this._findMatchingString(message.content);
             routingStruct = this.#stringRegistry.get(stringAction);
 
             if (!routingStruct) {
-                const regex = this.#findMatchingRegex(message.content);
+                const regex = this._findMatchingRegex(message.content);
                 routingStruct = this.#regexRegistry.get(regex);
             }            
         }
 
         if (routingStruct) {
-            return await this.#execute(message, routingStruct);
+            return await this._execute(message, routingStruct);
         } else {
             return false;
         }
     }
 
-    async #execute(message, routingStruct) {
+    async _execute(message, routingStruct) {
         const { executor, options, isCommandClass } = routingStruct;
 
         try {
@@ -102,7 +102,7 @@ export default class MessagesRouter {
         return false;
     }
 
-    #findMatchingCommand(commandName) {
+    _findMatchingCommand(commandName) {
         let match;
 
         for ([commandStr, _] of this.#commandRegistry) {
@@ -116,7 +116,7 @@ export default class MessagesRouter {
         return match;
     }
 
-    #findMatchingString(str) {
+    _findMatchingString(str) {
         let match;
 
         for ([registeredString, _] of this.#stringRegistry) {
@@ -130,7 +130,7 @@ export default class MessagesRouter {
         return match;
     }
 
-    #findMatchingRegex(str) {
+    _findMatchingRegex(str) {
         let match;
 
         for ([regex, _] of this.#regexRegistry) {
@@ -144,8 +144,8 @@ export default class MessagesRouter {
         return match;
     }
     
-    #createRoutingStruct(executor, options) {
-        const isCommandClass = commandExecutor.prototype instanceof Command || commandExecutor === Command;
+    _createRoutingStruct(executor, options) {
+        const isCommandClass = executor.prototype instanceof Command;
         const routingStruct = {
             executor,
             isCommandClass,

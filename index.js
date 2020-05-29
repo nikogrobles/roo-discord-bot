@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { run as runRooBot } from './src/roo';
+import { run as runRooBot } from './src/roo.js';
 
 dotenv.config();
 

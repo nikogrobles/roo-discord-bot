@@ -1,7 +1,7 @@
 import Discord from 'discord.js';
 import dotenv from 'dotenv';
-import * as routers from './src/router';
-import MessagesRouter from './routers/messages';
+import * as routers from './router.js';
+import MessagesRouter from './routers/messages.js';
 
 dotenv.config();
 
@@ -16,13 +16,13 @@ export default class RooBot {
 
     constructor(options) {
         this.discordClient = new Discord.Client(options);
-        this.#attachEvents();
+        this._attachEvents();
     }
 
     registerRouters(routers) {
         Object.keys(routers).forEach(routerName => {
             const router = routers[routerName];
-            this.#registerRouter(router);
+            this._registerRouter(router);
         });
     }
 
@@ -34,7 +34,7 @@ export default class RooBot {
         return this.discordClient.login(token);
     }
 
-    #registerRouter(router) {
+    _registerRouter(router) {
         const routerType = typeof router;
         const routers = this.#routerRegistry.get(routerType) || [];
 
@@ -43,7 +43,7 @@ export default class RooBot {
         }
     }
 
-    #attachEvents() {
+    _attachEvents() {
         this.discordClient.on('ready', () => this.onReady());
 
         Object.keys(EVENT_ROUTER_MAP).forEach(eventName => {
