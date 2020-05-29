@@ -1,7 +1,7 @@
 import Command from "../commands/command";
 
 export default class MessagesRouter {
-    commandPrefix = process.env.DISCORD_COMMAND_PREFIX || '/';
+    commandPrefix = Command.prefix;
 
     #commandRegistry = new Map();
 
@@ -19,7 +19,8 @@ export default class MessagesRouter {
         const {
             prefix
         } = options;
-
+        
+        // TODO support multiple command prefixes at the same time
         this.commandPrefix = prefix || this.commandPrefix;
     }
 
@@ -49,10 +50,10 @@ export default class MessagesRouter {
         this.#stringRegistry.set(str, routingStruct);
     }
 
-    async routeMessage(message) {
-        const isCommand = message.content.startsWith(this.commandPrefix);
+    async dispatch(message) {
+        const isCommand = Command.isCommand(message)
         const isBot = message.author.bot;
-        
+
         // maybe we will do something for fun later /shrug
         if (isBot) {
             return false;
@@ -61,8 +62,7 @@ export default class MessagesRouter {
         let routingStruct;
 
         if (isCommand) {
-            const commandArgs = message.content.slice(this.commandPrefix.length).split(/ +/);
-            const commandName = commandArgs.shift().toLowerCase();
+            const { name } = Command.parseCommand(message.content)
             const commandKey = this.#findMatchingCommand(commandName);
             routingStruct = this.#commandRegistry.get(commandKey);
         } else {
