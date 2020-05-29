@@ -14,18 +14,38 @@ export default class PartyCommand extends DiscordCommand {
         return !isNaN(this.count);
     }
 
+    get hasMentions() {
+        return this.message.mentions.users.size > 0;
+    }
+
     async execute() {
-        if (this.hasCount) {
-            await this.bulkDeleteLastMessages(this.count);   
+        console.log(`mention count ${this.message.mentions.users.size} ${JSON.stringify(this.message.mentions.users.keys())} and value ${this.message.mentions.users.values()}`);
+        if (this.hasMentions) {
+            const deletePromises = this.message.mentions.users.map(user => {
+                console.log(`user mentioned ${user}`);
+                console.log(`userID of mentioned ${user.id}`);
+                return this.bulkDeleteByUser(user.id);
+            });
+
+            return Promise.all(deletePromises);
+        } else if (this.hasCount) {
+            await this.bulkDeleteLastMessages(this.count + 1);   
         }
     }
 
-    bulkDeleteLastMessages(count) {
-        return this.channel.bulkDelete(count);
+    async bulkDeleteLastMessages(count) {
+        if (count > 99) {
+            this.message.reply(`Sorry! we only support purging less than 100 msessages at a time!`);
+        } else {
+            return await this.channel.bulkDelete(count);
+        }
     }
 
-    bulkDeleteByUser(userMention) {
-
+    async bulkDeleteByUser(userMentionID) {
+        const messages = await this.channel.messages.fetch();
+        const messagesToDelete = messages.filter(msg => msg.author.id === userMentionID);
+        const deletePromises = messagesToDelete.map(msg => msg.delete());
+        return Promise.all(deletePromises);
     }
 
 }

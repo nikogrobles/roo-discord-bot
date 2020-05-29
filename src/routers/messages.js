@@ -105,7 +105,8 @@ export default class MessagesRouter {
         } catch (err) {
             console.error(`
             Error while trying to execute action.
-            message content: ${message.content}`);
+            message content: ${message.content}
+            Error Message: ${err.message}`);
         }
 
         return false;
