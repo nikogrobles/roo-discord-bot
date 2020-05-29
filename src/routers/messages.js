@@ -67,17 +67,14 @@ export default class MessagesRouter {
 
         if (isCommand) {
             const { name } = Command.parseCommand(message);
-            console.log(`command to be executed: ${name}`);
             const commandKey = this._findMatchingCommand(name);
             routingStruct = this.#commandRegistry.get(commandKey);
         } else {
             const stringAction = this._findMatchingString(message.content);
             routingStruct = this.#stringRegistry.get(stringAction);
-            console.log(`exact string action found: ${stringAction}`);
 
             if (!routingStruct) {
                 const regex = this._findMatchingRegex(message.content);
-                console.log(`regex match actions found: ${regex}`);
                 routingStruct = this.#regexRegistry.get(regex);
             }            
         }
