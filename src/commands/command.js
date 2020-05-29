@@ -35,6 +35,14 @@ export default class DiscordCommand {
     return this.message.channel;
   }
 
+  get emojis() {
+    return this.discordClient.emojis.cache || this.discordClient.emojis;
+  }
+
+  getEmojiByName(name) {
+    return this.emojis.find(emoji => emoji.name === name);
+  }
+
   async execute() {
     throw new Error('you must define execute on the command class');
   }
