@@ -16,11 +16,15 @@ export default class DiscordCommand {
     return { name: commandName, args: commandArgs };
   }
 
-  constructor(message) {
+  constructor(message, options = {}) {
       const { name, args } = DiscordCommand.parseCommand(message);
+      const {
+        discordClient
+      } = options;
       this.message = message;
       this.invokedCommand = name;
       this.args = args;
+      this.discordClient = discordClient;
   }
 
   async execute() {

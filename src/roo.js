@@ -39,6 +39,7 @@ export default class RooBot {
         const routers = this.#routerRegistry.get(routerType) || [];
 
         if (!routers.includes(router)) {
+            router.discordClient = this.discordClient;
             this.#routerRegistry.set(routerType, [...routers, router]);
         }
     }

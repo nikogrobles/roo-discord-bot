@@ -5,6 +5,8 @@ export default class MessagesRouter {
     
     commandPrefix = Command.prefix;
 
+    discordClient = null;
+
     #commandRegistry = new Map();
 
     #regexRegistry = new Map();
@@ -64,7 +66,7 @@ export default class MessagesRouter {
         let routingStruct;
 
         if (isCommand) {
-            const { name } = Command.parseCommand(message.content);
+            const { name } = Command.parseCommand(message);
             console.log(`command to be executed: ${name}`);
             const commandKey = this._findMatchingCommand(name);
             routingStruct = this.#commandRegistry.get(commandKey);
@@ -89,13 +91,15 @@ export default class MessagesRouter {
 
     async _execute(message, routingStruct) {
         const { executor, options, isCommandClass } = routingStruct;
+        const exeOpt = Object.assign({}, options, { discordClient: this.discordClient });
 
         try {
             if (isCommandClass) {
-                const command = new executor(message, options);
+
+                const command = new executor(message, exeOpt);
                 await command.execute();
             } else {
-                await executor(message, options);
+                await executor(message, exeOpt);
             }
             return true;
         } catch (err) {
