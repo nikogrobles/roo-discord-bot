@@ -6,7 +6,8 @@
     "type": "module",
     "scripts": {
         "start": "node index.js",
-        "dev": "nodemon index.js"
+        "dev": "nodemon index.js",
+        "deploy": "git push heorku master"
     },
     "author": "Nicolas Robles",
     "license": "MIT",
