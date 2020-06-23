@@ -11,7 +11,7 @@ export default class PartyCommand extends DiscordCommand {
     }
 
     async execute() {
-        if (this.hasMentions) {
+        if (this.hasUserMentions) {
             const deletePromises = this.message.mentions.users.map(user => {
                 return this.bulkDeleteByUser(user.id);
             });

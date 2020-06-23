@@ -27,8 +27,32 @@ export default class DiscordCommand {
       this.discordClient = discordClient;
   }
 
-  get hasMentions() {
+  get member() {
+    return this.message.member;
+  }
+
+  get hasChannelMentions() {
+    return this.message.mentions.channels.size > 0;
+  }
+
+  get hasRoleMentions() {
+    return this.message.mentions.roles.size > 0;
+  }
+
+  get hasUserMentions() {
     return this.message.mentions.users.size > 0;
+  }
+
+  get channelMentions() {
+    return this.message.mentions.channels;
+  }
+
+  get roleMentions() {
+    return this.message.mentions.roles;
+  }
+
+  get userMentions() {
+    return this.message.mentions.members;
   }
 
   get channel() {
@@ -41,6 +65,10 @@ export default class DiscordCommand {
 
   getEmojiByName(name) {
     return this.emojis.find(emoji => emoji.name === name);
+  }
+
+  send(message) {
+    this.message.channel.send(message);
   }
 
   async execute() {
