@@ -32,15 +32,15 @@ export default class DiscordCommand {
   }
 
   get hasChannelMentions() {
-    return this.message.mentions.channels.size > 0;
+    return this.channelMentions.size > 0;
   }
 
   get hasRoleMentions() {
-    return this.message.mentions.roles.size > 0;
+    return this.roleMentions.size > 0;
   }
 
   get hasUserMentions() {
-    return this.message.mentions.users.size > 0;
+    return this.userMentions.size > 0;
   }
 
   get channelMentions() {
@@ -67,8 +67,8 @@ export default class DiscordCommand {
     return this.emojis.find(emoji => emoji.name === name);
   }
 
-  send(message) {
-    this.message.channel.send(message);
+  async send(message, options=null) {
+    await this.message.channel.send(message, options);
   }
 
   async execute() {

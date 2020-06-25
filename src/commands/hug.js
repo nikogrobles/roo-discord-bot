@@ -1,23 +1,23 @@
 import axios from 'axios';
-import Discord from 'discord.js';
 import DiscordCommand from './command.js';
+import { MessageEmbed }from 'discord.js'
 
 export default class HugCommand extends DiscordCommand {
 
   async execute() {
     if (!this.member) {
-      this.send("You must be in a Roo Bot enabled Discord server to use this command");
+      await this.send("You must be in a Roo Bot enabled Discord server to use this command");
       return;
     }
 
     const hug = this.getEmojiByName('HugSpin');
-    this.message.react(hug);
+    await this.message.react(hug);
 
     let receivers = "";
     const mentionedUsernames = [];
 
     if (this.hasRoleMentions || this.hasChannelMentions) {
-      this.send(`Please use \`\`\`${DiscordCommand.prefix}hug @user @user...\`\`\``);
+      await this.send(`Please use \`\`\`${DiscordCommand.prefix}hug @user @user...\`\`\``);
       return;
     }
 
@@ -35,7 +35,7 @@ export default class HugCommand extends DiscordCommand {
           mentionedUsernames.slice(-1)[0]
         ].join(mentionedUsernames.length < 2 ? '' : ' and ');
       } else {
-        this.send(`Please use \`\`\`${this.prefix}hug @user @user...\`\`\``);
+        awaitthis.send(`Please use \`\`\`${this.prefix}hug @user @user...\`\`\``);
         return;
       }
     } else {
@@ -51,16 +51,20 @@ export default class HugCommand extends DiscordCommand {
     } else {
       searchQuery = "hug";
     }
-    axios.get(
-      `http://api.giphy.com/v1/gifs/translate?s=${searchQuery}&api_key=${process.env.GIPHY_API_KEY}`
-    ).then(response => {
-      const hugEmbed = new Discord.MessageEmbed()
+
+    try {
+      const response = await axios.get(
+        `http://api.giphy.com/v1/gifs/translate?s=${searchQuery}&api_key=${process.env.GIPHY_API_KEY}`
+      );
+      const hugEmbed = new MessageEmbed()
         .setColor(this.member.displayHexColor || '#FFF')
         .setAuthor(`${this.member.displayName} gave ${receivers} a hug!`, this.member.user.avatarURL())
         .setThumbnail(hug.url)
         .setImage(`https://media.giphy.com/media/${response.data.data.id}/giphy.gif`);
 
-      this.send(hugEmbed);
-    });
+      await this.send(hugEmbed);
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
